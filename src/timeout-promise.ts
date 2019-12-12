@@ -1,18 +1,11 @@
 import { isPromise } from './promise-utils'
+import { WrapperPromise, WrapperPromiseExecutor } from './wrapper-promise'
 
 export class TimeoutError extends Error {}
 
-type TimeoutPromiseExecutor<T> = (
-  resolve: (value?: T | PromiseLike<T>) => void,
-  reject: (reason?: any) => void
-) => void | Promise<void>
-
-export class TimeoutPromise<T> implements Promise<T> {
-  private readonly promise: Promise<T>
-
-  constructor(executor: TimeoutPromiseExecutor<T>, timeout: number, error?: Error) {
-    // Create wrapper
-    const wrapper: TimeoutPromiseExecutor<T> = (resolve, reject) => {
+export class TimeoutPromise<T> extends WrapperPromise<T> {
+  constructor(executor: WrapperPromiseExecutor<T>, timeout: number, error?: Error) {
+    super((resolve, reject) => {
       // Start timeout
       const timeoutRef = setTimeout(() => {
         if (error) {
@@ -41,24 +34,6 @@ export class TimeoutPromise<T> implements Promise<T> {
           rejectWrap(e)
         })
       }
-    }
-
-    this.promise = new Promise(wrapper)
-  }
-
-  then<TResult1 = T, TResult2 = never>(
-    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null | undefined,
-    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined
-  ): Promise<TResult1 | TResult2> {
-    return this.promise.then(onfulfilled, onrejected)
-  }
-  catch<TResult = never>(
-    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null | undefined
-  ): Promise<T | TResult> {
-    return this.promise.catch(onrejected)
-  }
-  [Symbol.toStringTag]: string
-  finally(onfinally?: (() => void) | null | undefined): Promise<T> {
-    return this.promise.finally(onfinally)
+    })
   }
 }
