@@ -1,4 +1,3 @@
-import { isPromise } from './promise-utils'
 import { WrapperPromise, WrapperPromiseExecutor } from './wrapper-promise'
 
 export class TimeoutError extends Error {}
@@ -25,15 +24,8 @@ export class TimeoutPromise<T> extends WrapperPromise<T> {
         reject(e)
       }
 
-      // Run the executer and capture output
-      const maybePromise = executor(resolveWrap, rejectWrap)
-
-      // Reject if the executer returns a promise the rejects
-      if (isPromise(maybePromise)) {
-        maybePromise.catch(e => {
-          rejectWrap(e)
-        })
-      }
+      // Run the executer
+      return executor(resolveWrap, rejectWrap)
     })
   }
 }
