@@ -17,7 +17,7 @@ describe('Promises', () => {
   test('Exceptions can be converted to rejects only when a try/catch is used', async () => {
     // When using async the whole block is converted to Promise that is returned to the caller
     // eslint-disable-next-line no-async-promise-executor
-    const promise = new Promise<boolean>(async (resolve, reject) => {
+    const promise = new Promise<void>(async (resolve, reject) => {
       try {
         throw new Error('Hello') // This means that this won't be caught unless we do the try catch here
       } catch (e) {

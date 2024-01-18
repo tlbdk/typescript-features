@@ -3,7 +3,7 @@ import { WrapperPromise, WrapperPromiseExecutor } from './wrapper-promise'
 export class TimeoutError extends Error {}
 
 export class TimeoutPromise<T> extends WrapperPromise<T> {
-  constructor(executor: WrapperPromiseExecutor<T>, timeout: number, error?: Error) {
+  public constructor(executor: WrapperPromiseExecutor<T>, timeout: number, error?: Error) {
     super((resolve, reject) => {
       // Start timeout
       const timeoutRef = setTimeout(() => {
@@ -15,10 +15,11 @@ export class TimeoutPromise<T> extends WrapperPromise<T> {
       }, timeout)
 
       // Wrap resolve and reject so we clear the timeout
-      const resolveWrap = (arg?: T | PromiseLike<T>): void => {
+      const resolveWrap = (arg: T | PromiseLike<T>): void => {
         clearTimeout(timeoutRef)
         resolve(arg)
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const rejectWrap = (e?: any): void => {
         clearTimeout(timeoutRef)
         reject(e)

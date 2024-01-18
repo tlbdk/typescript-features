@@ -41,7 +41,7 @@ export class AsyncArray<T> extends Array<T | Promise<T>> {
 }
 
 type DeferredPromise<T> = {
-  resolve: (value?: T | PromiseLike<T>) => void
+  resolve: (value: T | PromiseLike<T>) => void
   reject: (reason?: any) => void
 }
 
